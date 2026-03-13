@@ -24,7 +24,7 @@ def read_root():
 def test_endpoint():
     # Inseriamo un record fittizio se il db è vuoto solo per fare un test
     if len(db) == 0:
-        db.insert({'id': 1, 'nome': 'Progetto Test', 'stato': 'Inizializzato', 'tecnologie': ['HTML', 'FastAPI', 'TinyDB']})
+        db.insert({'id': 1, 'nome': 'Progetto Test', 'stato': 'Halo 👋', 'tecnologie': ['HTML', 'FastAPI', 'TinyDB']})
     
     # Restituisce tutto il contenuto del database
     return {"status": "successo", "dati": db.all()}
