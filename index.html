@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accedi - Progetto Test</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container auth-container">
+        
+        <div id="login-section">
+            <h1 class="glow-title">Accedi</h1>
+            <div class="input-group">
+                <input type="text" id="login-username" placeholder="Nome utente">
+            </div>
+            <div class="input-group">
+                <input type="password" id="login-password" placeholder="Password">
+            </div>
+            <button id="login-btn">Entra</button>
+            <p class="switch-text">Non hai un account? <span id="show-register">Registrati</span></p>
+            <p id="login-message" class="message"></p>
+        </div>
+
+        <div id="register-section" style="display: none;">
+            <h1 class="glow-title">Crea Account</h1>
+            <div class="input-group">
+                <input type="text" id="reg-username" placeholder="Nome utente">
+            </div>
+            <div class="input-group">
+                <input type="password" id="reg-password" placeholder="Password">
+            </div>
+            <div class="input-group">
+                <input type="password" id="reg-password-confirm" placeholder="Conferma Password">
+            </div>
+            <button id="register-btn">Registrati</button>
+            <p class="switch-text">Hai già un account? <span id="show-login">Accedi</span></p>
+            <p id="register-message" class="message"></p>
+        </div>
+
+    </div>
+
+    <script src="auth.js"></script>
+</body>
+</html>

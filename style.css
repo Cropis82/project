@@ -99,3 +99,72 @@ button:hover {
     font-family: 'Courier New', Courier, monospace;
     color: var(--text-light);
 }
+
+/* --- AGGIUNTE PER IL LOGIN/REGISTRAZIONE --- */
+
+.auth-container {
+    max-width: 400px; /* Un po' più stretto per il login */
+}
+
+.input-group {
+    margin-bottom: 1.5rem;
+}
+
+input[type="password"] {
+    /* Eredita lo stesso stile dei text input */
+    width: 100%;
+    padding: 12px 15px;
+    background-color: rgba(19, 41, 51, 0.8);
+    border: 1px solid var(--accent-title);
+    border-radius: 8px;
+    color: var(--text-light);
+    font-size: 1rem;
+    outline: none;
+    transition: box-shadow 0.3s ease;
+    box-sizing: border-box; /* Previene sbavature fuori dal div */
+}
+
+input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+input[type="password"]:focus {
+    box-shadow: 0 0 8px rgba(252, 229, 205, 0.4);
+}
+
+.switch-text {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+}
+
+.switch-text span {
+    color: var(--glow-shadow);
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: underline;
+    transition: text-shadow 0.3s ease;
+}
+
+.switch-text span:hover {
+    text-shadow: 0 0 8px var(--glow-shadow);
+}
+
+.message {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    font-weight: bold;
+    min-height: 20px;
+}
+
+.message.error {
+    color: #ff4c4c;
+    text-shadow: 0 0 5px rgba(255, 76, 76, 0.5);
+}
+
+.message.success {
+    color: #4caf50;
+    text-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
