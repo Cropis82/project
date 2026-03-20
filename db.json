@@ -1,1 +1,1 @@
-{"_default": {"1": {"id": 1, "nome": "Progetto Test", "stato": "Halo \ud83d\udc4b", "tecnologie": ["HTML", "FastAPI", "TinyDB"]}}}
+{"_default": {"1": {"id": 1, "nome": "Progetto Test", "stato": "Halo \ud83d\udc4b", "tecnologie": ["HTML", "FastAPI", "TinyDB"]}}, "users": {"1": {"username": "string", "password": "string", "impostazioni": {"tema": "dark", "notifiche": true}}}}
