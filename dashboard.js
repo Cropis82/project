@@ -100,14 +100,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Gestione Selezione Tema (Solo visiva per ora)
-    colorCubes.forEach(cube => {
-        cube.addEventListener('click', () => {
-            // 1. Rimuovi la classe 'selected' da tutti i cubi
-            colorCubes.forEach(c => c.classList.remove('selected'));
+    // --- GESTIONE SELEZIONE TEMA (Con salvataggio in localStorage) ---
+    const themeOptions = document.querySelectorAll('.theme-option');
 
-            // 2. Aggiungi la classe 'selected' solo a quello cliccato
+    // 1. Controlla se c'è un tema salvato, altrimenti usa 'default'
+    const savedTheme = localStorage.getItem('notesgo_theme') || 'default';
+
+    themeOptions.forEach(option => {
+        const themeName = option.getAttribute('data-theme');
+        const cube = option.querySelector('.color-cube');
+        
+        // 2. Al caricamento, illumina il cubo del tema salvato
+        if (themeName === savedTheme) {
             cube.classList.add('selected');
+        } else {
+            cube.classList.remove('selected');
+        }
+
+        // 3. Quando clicchi su un nuovo cubo...
+        cube.addEventListener('click', () => {
+            // Spegni tutti i cubi
+            document.querySelectorAll('.color-cube').forEach(c => c.classList.remove('selected'));
+            
+            // Accendi solo quello cliccato
+            cube.classList.add('selected');
+            
+            // Salva la nuova scelta nella memoria del browser!
+            localStorage.setItem('notesgo_theme', themeName);
         });
     });
 });
