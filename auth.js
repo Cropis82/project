@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // --- NUOVA RIGA: Salviamo l'identità nel browser ---
                 localStorage.setItem('loggedUser', username);
                 
-                // Reindirizza alla pagina del tester
+                // Reindirizza alla pagina dashboard
                 setTimeout(() => {
                     window.location.href = 'dashboard.html';
                 }, 1000);
