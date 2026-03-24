@@ -76,9 +76,11 @@ def get_user_profile(username: str):
     if not result:
         raise HTTPException(status_code=404, detail="Utente non trovato")
     
-    user_data = result[0]
+    # --- LA SOLUZIONE È QUI ---
+    # Creiamo una COPIA del dizionario, così non tocchiamo la memoria di TinyDB!
+    user_data = dict(result[0]) 
     
-    # Rimuoviamo la password dai dati prima di inviarli al frontend!
+    # Ora possiamo rimuovere la password dalla copia in tutta sicurezza
     if 'password' in user_data:
         del user_data['password']
         
