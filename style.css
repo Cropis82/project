@@ -199,3 +199,185 @@ input[type="password"]:focus {
     color: var(--text-light);
     box-shadow: 0 0 10px var(--glow-shadow);
 }
+
+/* =========================================
+   STILI PER LA DASHBOARD (NOTESGO)
+   ========================================= */
+
+/* Sovrascrive il body solo per la dashboard */
+.dashboard-body {
+    background-color: #fff5ef; /* Sfondo chiaro per il contrasto */
+    color: var(--bg-dark);
+    display: block; /* Toglie il flex center usato nel login */
+    height: auto;
+    min-height: 100vh;
+}
+
+/* Header stile App */
+.top-header {
+    background-color: var(--bg-dark); /* Il colore petrolio/scuro originale */
+    color: var(--text-light);
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo-title {
+    color: var(--accent-title);
+    margin: 0;
+    font-size: 1.8rem;
+    text-shadow: 0 0 10px var(--glow-shadow);
+}
+
+/* Barre di ricerca */
+.search-bar {
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 245, 239, 0.2);
+    background-color: rgba(255, 245, 239, 0.1);
+    color: var(--text-light);
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.search-bar::placeholder {
+    color: rgba(255, 245, 239, 0.6);
+}
+
+.public-search {
+    width: 350px;
+}
+
+.search-bar:focus {
+    background-color: rgba(255, 245, 239, 0.2);
+    border-color: var(--accent-title);
+    box-shadow: 0 0 8px rgba(252, 229, 205, 0.3);
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-name {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+/* Pulsanti icone */
+.icon-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 5px;
+    box-shadow: none;
+    transition: transform 0.2s ease;
+}
+
+.icon-btn:hover {
+    transform: scale(1.1);
+    background: none;
+    box-shadow: none;
+}
+
+/* Corpo centrale */
+.dashboard-main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #e0d5ce; /* Linea di separazione elegante */
+    padding-bottom: 15px;
+}
+
+.main-header h2 {
+    margin: 0;
+    color: var(--bg-dark);
+    font-size: 2rem;
+}
+
+.local-search {
+    color: var(--bg-dark);
+    background-color: white;
+    border: 1px solid #ccc;
+    width: 250px;
+}
+
+.local-search::placeholder {
+    color: #888;
+}
+
+.local-search:focus {
+    background-color: white;
+    border-color: #f6b36b;
+    box-shadow: 0 0 8px rgba(246, 179, 107, 0.4);
+}
+
+/* --- CARTE DEI GRUPPI --- */
+.groups-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.group-card {
+    background-color: #f6b36b; /* L'arancione richiesto */
+    border-radius: 12px;
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.group-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.group-name {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #132933; /* Scritta scura per alta leggibilità */
+    margin: 0;
+}
+
+.group-stats {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    font-size: 1.1rem;
+    color: #132933;
+    font-weight: 600;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Il pallino verde per gli online */
+.online-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    background-color: #4caf50;
+    border-radius: 50%;
+    box-shadow: 0 0 5px #4caf50;
+}

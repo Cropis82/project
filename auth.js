@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Reindirizza alla pagina del tester
                 setTimeout(() => {
-                    window.location.href = 'tester.html';
+                    window.location.href = 'dashboard.html';
                 }, 1000);
             } else {
                 mostraMessaggio(messageEl, data.detail, 'error');
