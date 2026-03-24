@@ -1,1 +1,24 @@
-{"_default": {"1": {"id": 1, "nome": "Progetto Test", "stato": "Halo \ud83d\udc4b", "tecnologie": ["HTML", "FastAPI", "TinyDB"]}}, "users": {"1": {"username": "string", "password": "string", "impostazioni": {"tema": "dark", "notifiche": true}}}}
+{
+    "_default": {
+        "1": {
+            "id": 1,
+            "nome": "Progetto Test",
+            "stato": "Halo \ud83d\udc4b",
+            "tecnologie": [
+                "HTML",
+                "FastAPI",
+                "TinyDB"
+            ]
+        }
+    },
+    "users": {
+        "1": {
+            "username": "utente",
+            "password": "$2b$12$QH7njlpIPqPheXhtwspGF.DzDPE0Gl.gBFsteDD7CgXo970Q1dZXe",
+            "impostazioni": {
+                "tema": "dark",
+                "notifiche": true
+            }
+        }
+    }
+}

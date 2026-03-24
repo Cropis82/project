@@ -76,6 +76,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok) {
                 mostraMessaggio(messageEl, 'Accesso in corso...', 'success');
+                
+                // --- NUOVA RIGA: Salviamo l'identità nel browser ---
+                localStorage.setItem('loggedUser', username);
+                
                 // Reindirizza alla pagina del tester
                 setTimeout(() => {
                     window.location.href = 'tester.html';

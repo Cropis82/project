@@ -168,3 +168,34 @@ input[type="password"]:focus {
     color: #4caf50;
     text-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
 }
+
+/* --- AGGIUNTE PER L'HEADER UTENTE IN TESTER.HTML --- */
+.user-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 245, 239, 0.1);
+}
+
+#welcome-message {
+    font-weight: bold;
+    color: var(--accent-title);
+    font-size: 1.1rem;
+}
+
+.small-btn {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    background-color: transparent;
+    border: 1px solid var(--glow-shadow);
+    color: var(--glow-shadow);
+    box-shadow: none;
+}
+
+.small-btn:hover {
+    background-color: var(--glow-shadow);
+    color: var(--text-light);
+    box-shadow: 0 0 10px var(--glow-shadow);
+}
