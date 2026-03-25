@@ -39,6 +39,11 @@ class GroupCreate(BaseModel):
 class Heartbeat(BaseModel):
     username: str
 
+# Modello per abbandonare un gruppo
+class LeaveGroup(BaseModel):
+    username: str
+    group_id: str
+
 @app.get("/api/test")
 def test_endpoint():
     return {"status": "successo", "messaggio": "Backend connesso correttamente!"}
@@ -187,3 +192,51 @@ def heartbeat(data: Heartbeat):
     users_table.update({'ultimo_accesso': current_time}, UserQuery.username == data.username)
     
     return {"status": "ok"}
+
+# 1. Rotta per caricare un singolo gruppo e i suoi membri online
+@app.get("/api/group/{group_id}")
+def get_single_group(group_id: str):
+    GroupQuery = Query()
+    result = groups_table.search(GroupQuery.id == group_id)
+    
+    if not result:
+        raise HTTPException(status_code=404, detail="Gruppo non trovato")
+        
+    group = result[0]
+    
+    # Calcoliamo chi è online (come in dashboard)
+    current_time = time.time()
+    SOGLIA_ONLINE = 120
+    membri_con_stato = [] # Lista di dizionari {nome: str, online: bool}
+    
+    for member in group.get('members', []):
+        is_online = False
+        user_data = users_table.search(UserQuery.username == member)
+        if user_data:
+            ultimo_accesso = user_data[0].get('ultimo_accesso', 0)
+            if current_time - ultimo_accesso <= SOGLIA_ONLINE:
+                is_online = True
+                
+        membri_con_stato.append({"username": member, "online": is_online})
+        
+    group['membri_dettagliati'] = membri_con_stato
+    return {"status": "successo", "gruppo": group}
+
+# 2. Rotta per abbandonare il gruppo
+@app.post("/api/groups/leave")
+def leave_group(data: LeaveGroup):
+    GroupQuery = Query()
+    result = groups_table.search(GroupQuery.id == data.group_id)
+    
+    if not result:
+        raise HTTPException(status_code=404, detail="Gruppo non trovato")
+        
+    group = result[0]
+    
+    if data.username in group['members']:
+        group['members'].remove(data.username)
+        # Aggiorniamo il DB
+        groups_table.update({'members': group['members']}, GroupQuery.id == data.group_id)
+        return {"status": "successo", "messaggio": "Hai abbandonato il gruppo."}
+    else:
+        raise HTTPException(status_code=400, detail="Non fai parte di questo gruppo")

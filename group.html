@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NotesGO - Gruppo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="main-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <h1 id="logo-link" style="cursor: pointer; margin: 0; color: var(--theme-primary);">NotesGO</h1>
+        
+        <div class="header-center-area" id="header-expand-trigger">
+            <span style="opacity: 0.5; font-size: 0.8rem; color: var(--theme-text);">(Clicca qui per info gruppo)</span>
+        </div>
+
+        <div class="header-actions" style="display: flex; gap: 10px;">
+            <button id="group-settings-btn" class="small-btn hidden">⚙️ Impostazioni</button>
+            <button id="leave-group-btn" class="small-btn" style="background-color: #d9534f; color: white;">🚪 Esci</button>
+        </div>
+    </header>
+
+    <div id="expanded-info">
+        <h2 id="exp-group-name" style="color: var(--theme-primary); font-size: 2.5rem; margin-bottom: 10px;">Nome Gruppo</h2>
+        <p id="exp-group-desc" style="color: var(--theme-text); font-size: 1.2rem; margin-bottom: 30px;">Descrizione del gruppo...</p>
+        
+        <h3 style="color: var(--theme-text);">Membri (<span id="exp-members-count">0</span>)</h3>
+        <div id="members-container" class="member-list">
+            </div>
+    </div>
+
+    <main class="dashboard-container">
+        <h2 id="body-group-name" style="color: var(--theme-text); margin-top: 20px;">Caricamento...</h2>
+        
+        <div style="margin-top: 50px; text-align: center; opacity: 0.5; color: var(--theme-text);">
+            La Kanban Board verrà inserita qui.
+        </div>
+    </main>
+
+    <button class="copy-id-btn" id="show-id-btn" title="Mostra ID Gruppo">🔗</button>
+
+    <div id="id-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>ID del Gruppo</h2>
+                <button id="close-id-modal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body" style="text-align: center;">
+                <p class="output-label">Clicca sul codice qui sotto per copiarlo e invialo ai tuoi amici per farli unire!</p>
+                <div id="group-id-display" title="Clicca per copiare!">CARICAMENTO...</div>
+                <p id="copy-success-msg" style="color: var(--theme-primary); opacity: 0; transition: opacity 0.3s;">Copiato negli appunti!</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="leave-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Abbandona Gruppo</h2>
+                <button id="close-leave-modal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="output-label">Sei sicuro di voler uscire da questo gruppo? Non potrai rientrare a meno di non essere invitato di nuovo.</p>
+                <button id="confirm-leave-btn" style="width: 100%; margin-top: 15px; background-color: #d9534f; color: white;">Sì, abbandona gruppo</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="group.js"></script>
+</body>
+</html>

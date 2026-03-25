@@ -52,11 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
 
-            // Quando clicchi su un gruppo, mostra la descrizione come richiesto
+            // Quando clicchi su un gruppo, ti porta alla sua pagina!
             card.addEventListener('click', () => {
-                // Forniamo un fallback se la descrizione è vuota
-                const descrizione = group.description ? group.description : "Nessuna descrizione fornita.";
-                alert(`Descrizione del gruppo "${group.name}":\n\n${descrizione}`);
+                window.location.href = `group.html?id=${group.id}`;
             });
 
             groupsContainer.appendChild(card);
