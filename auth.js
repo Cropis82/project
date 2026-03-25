@@ -77,8 +77,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 mostraMessaggio(messageEl, 'Accesso in corso...', 'success');
                 
-                // --- NUOVA RIGA: Salviamo l'identità nel browser ---
+                // Salviamo l'identità nel browser
                 localStorage.setItem('loggedUser', username);
+                
+                // --- NUOVA RIGA: Salviamo il tema che ci ha mandato FastAPI ---
+                localStorage.setItem('notesgo_theme', data.tema || 'default');
                 
                 // Reindirizza alla pagina dashboard
                 setTimeout(() => {

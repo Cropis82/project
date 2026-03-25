@@ -22,6 +22,10 @@ class UserAuth(BaseModel):
     username: str
     password: str
 
+class ThemeUpdate(BaseModel):
+    username: str
+    theme: str
+
 @app.get("/api/test")
 def test_endpoint():
     return {"status": "successo", "messaggio": "Backend connesso correttamente!"}
@@ -48,25 +52,46 @@ def register(user: UserAuth):
 
 @app.post("/api/login")
 def login(user: UserAuth):
-    # 1. Cerchiamo SOLO per username (non possiamo cercare per password perché è criptata)
     result = users_table.search(UserQuery.username == user.username)
-    
-    # Se l'utente non esiste
     if not result:
         raise HTTPException(status_code=401, detail="Nome utente o password errati")
     
     stored_user = result[0]
-    
-    # 2. Verifichiamo che la password inserita corrisponda all'hash salvato
     password_corretta = bcrypt.checkpw(
         user.password.encode('utf-8'), 
         stored_user['password'].encode('utf-8')
     )
-    
     if not password_corretta:
         raise HTTPException(status_code=401, detail="Nome utente o password errati")
     
-    return {"status": "successo", "messaggio": "Login effettuato con successo!"}
+    # Recuperiamo il tema salvato (se non c'è, usiamo 'default')
+    tema_salvato = stored_user.get('impostazioni', {}).get('tema', 'default')
+    
+    # Restituiamo il tema insieme al messaggio di successo!
+    return {
+        "status": "successo", 
+        "messaggio": "Login effettuato con successo!",
+        "tema": tema_salvato
+    }
+
+@app.post("/api/update_theme")
+def update_theme(data: ThemeUpdate):
+    result = users_table.search(UserQuery.username == data.username)
+    if not result:
+        raise HTTPException(status_code=404, detail="Utente non trovato")
+    
+    user_data = result[0]
+    
+    # Assicuriamoci che esista la chiave impostazioni, poi cambiamo il tema
+    if 'impostazioni' not in user_data:
+        user_data['impostazioni'] = {}
+        
+    user_data['impostazioni']['tema'] = data.theme
+    
+    # Aggiorniamo il TinyDB
+    users_table.update({'impostazioni': user_data['impostazioni']}, UserQuery.username == data.username)
+    
+    return {"status": "successo", "messaggio": "Tema aggiornato nel database!"}
 
 @app.get("/api/user/{username}")
 def get_user_profile(username: str):

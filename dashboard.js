@@ -190,17 +190,34 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Quando clicchi su un nuovo cubo...
-        cube.addEventListener('click', () => {
+        // Quando clicchi su un nuovo cubo...
+        cube.addEventListener('click', async () => {
             // Spegni tutti i cubi
             document.querySelectorAll('.color-cube').forEach(c => c.classList.remove('selected'));
             // Accendi solo quello cliccato
             cube.classList.add('selected');
             
-            // Salva la scelta
+            // Salva la scelta in locale
             localStorage.setItem('notesgo_theme', themeName);
             
             // APPLICA I COLORI ALL'ISTANTE!
             applyTheme(themeName);
+
+            // --- NUOVA PARTE: Inviamo il salvataggio a FastAPI ---
+            try {
+                const response = await fetch('https://silver-cod-q7pp7qqj9wrvh44qw-8000.app.github.dev/api/update_theme', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        username: currentUser, 
+                        theme: themeName 
+                    })
+                });
+                const data = await response.json();
+                console.log(data.messaggio); // Mostra nella console se ha salvato con successo
+            } catch (error) {
+                console.error("Errore durante il salvataggio del tema nel database:", error);
+            }
         });
     });
 });
