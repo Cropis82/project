@@ -20,46 +20,68 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'index.html';
     });
 
-    // 4. DATI FITTIZI: Simuliamo i gruppi dal database per testare l'estetica
-    const userGroups = [
-        { id: 1, name: "Sviluppo NotesGO", totalMembers: 5, online: 3 },
-        { id: 2, name: "Progetto Università - Reti", totalMembers: 12, online: 4 },
-        { id: 3, name: "Gruppo di Studio Python", totalMembers: 45, online: 12 },
-        { id: 4, name: "Lista della Spesa Condivisa", totalMembers: 2, online: 1 }
-    ];
+    // 4. Variabile globale per i gruppi reali (inizialmente vuota)
+    let userGroups = [];
 
     // 5. Generatore delle Carte HTML
     function renderGroups(groups) {
         groupsContainer.innerHTML = ''; // Pulisce il contenitore prima di disegnare
 
+        if (groups.length === 0) {
+            groupsContainer.innerHTML = '<p style="text-align: center; color: var(--theme-placeholder); padding: 20px;">Nessun gruppo trovato. Creane uno per iniziare!</p>';
+            return;
+        }
+
         groups.forEach(group => {
             const card = document.createElement('div');
             card.className = 'group-card';
+
+            // Calcoliamo i membri totali leggendo la lunghezza dell'array dal database
+            const membriTotali = group.members ? group.members.length : 1;
 
             card.innerHTML = `
                 <h3 class="group-name">${group.name}</h3>
                 <div class="group-stats">
                     <div class="stat-item" title="Membri totali">
-                        <span>👥 ${group.totalMembers}</span>
+                        <span>👥 ${membriTotali}</span>
                     </div>
                     <div class="stat-item" title="Membri online">
                         <span class="online-dot"></span>
-                        <span>${group.online}</span>
-                    </div>
+                        <span>1</span> </div>
                 </div>
             `;
 
-            // Quando clicchi su un gruppo
+            // Quando clicchi su un gruppo, mostra la descrizione come richiesto
             card.addEventListener('click', () => {
-                alert(`Entrando nel gruppo: "${group.name}"\n\n(Qui in futuro caricheremo la Kanban Board e la Chat!)`);
+                // Forniamo un fallback se la descrizione è vuota
+                const descrizione = group.description ? group.description : "Nessuna descrizione fornita.";
+                alert(`Descrizione del gruppo "${group.name}":\n\n${descrizione}`);
             });
 
             groupsContainer.appendChild(card);
         });
     }
 
-    // Disegniamo i gruppi all'avvio
-    renderGroups(userGroups);
+    // --- NUOVA LOGICA: Carica i gruppi dal Backend ---
+    async function loadGroups() {
+        try {
+            const response = await fetch(`https://silver-cod-q7pp7qqj9wrvh44qw-8000.app.github.dev/api/groups/${currentUser}`);
+            const data = await response.json();
+
+            if (response.ok) {
+                userGroups = data.gruppi; // Salviamo i dati reali dal DB
+                renderGroups(userGroups); // Disegniamo le carte
+            } else {
+                console.error("Errore nel caricamento gruppi:", data.detail);
+            }
+        } catch (error) {
+            console.error("Errore di connessione al server:", error);
+            groupsContainer.innerHTML = '<p style="color: red; text-align: center;">Errore di connessione al server.</p>';
+        }
+    }
+
+    // Chiamiamo la funzione per scaricare i gruppi appena la pagina si apre
+    loadGroups();
 
     // --- NUOVA LOGICA: Filtro di ricerca locale ---
     const localSearchInput = document.getElementById('local-search-input');
@@ -148,12 +170,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             if (response.ok) {
-                alert("🎉 " + data.messaggio); // Mostra un popup nativo di successo
-                createGroupModal.classList.add('hidden'); // Chiude il modale
+                alert("🎉 " + data.messaggio); 
+                createGroupModal.classList.add('hidden'); 
                 
-                // Pulisce i campi per la prossima volta
                 document.getElementById('group-name').value = '';
                 document.getElementById('group-desc').value = '';
+                
+                // --- NUOVA RIGA: Ricarica i gruppi per mostrare subito quello nuovo! ---
+                loadGroups(); 
                 
             } else {
                 alert("Errore: " + data.detail);

@@ -144,3 +144,13 @@ def create_group(group: GroupCreate):
     groups_table.insert(new_group)
     
     return {"status": "successo", "messaggio": f"Gruppo '{group.name}' creato!", "group_id": group_id}
+
+@app.get("/api/groups/{username}")
+def get_user_groups(username: str):
+    # Usiamo una funzione lambda per dire a TinyDB: 
+    # "Trova i gruppi in cui questo username è presente nella lista 'members'"
+    GroupQuery = Query()
+    user_groups = groups_table.search(GroupQuery.members.test(lambda members: username in members))
+    
+    # Se l'utente non ha gruppi, restituiamo semplicemente una lista vuota
+    return {"status": "successo", "gruppi": user_groups}
