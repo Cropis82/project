@@ -687,3 +687,76 @@ input[type="password"]:focus {
 .header-center-area span {
     color: #ffffff !important; /* Bianco sta bene su tutti i tuoi --theme-header-bg scuri */
 }
+
+/* =========================================
+   PULIZIA STILI INLINE - PAGINA GRUPPO
+   ========================================= */
+
+/* Header e suoi elementi */
+.group-page-body .main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#logo-link {
+    cursor: pointer;
+}
+
+#header-hint-text {
+    opacity: 0.6;
+    font-size: 0.85rem;
+    font-weight: bold;
+    transition: opacity 0.2s;
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* Bottoni Rossi (Pericolo/Uscita) */
+.btn-danger {
+    background-color: #d9534f !important;
+    color: white !important;
+}
+
+#confirm-leave-btn {
+    width: 100%;
+    margin-top: 15px;
+}
+
+/* Header Espanso (Tendina) */
+#exp-group-name {
+    color: var(--theme-primary);
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+#exp-group-desc {
+    color: var(--theme-text);
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+}
+
+#expanded-info h3 {
+    color: var(--theme-text);
+}
+
+/* Corpo della pagina (Dashboard) */
+#body-group-name {
+    color: var(--theme-text);
+    margin-top: 20px;
+}
+
+.kanban-placeholder {
+    margin-top: 50px;
+    text-align: center;
+    opacity: 0.5;
+    color: var(--theme-text);
+}
+
+/* Modali */
+.modal-body-center {
+    text-align: center;
+}
