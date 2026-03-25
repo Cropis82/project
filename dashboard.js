@@ -100,6 +100,70 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // --- LOGICA MODALE CREAZIONE GRUPPO ---
+    const createGroupBtn = document.getElementById('create-group-btn');
+    const createGroupModal = document.getElementById('create-group-modal');
+    const closeCreateGroupBtn = document.getElementById('close-create-group');
+    const submitGroupBtn = document.getElementById('submit-create-group');
+
+    // Apri modale
+    createGroupBtn.addEventListener('click', () => {
+        createGroupModal.classList.remove('hidden');
+    });
+
+    // Chiudi modale (con la X o cliccando fuori)
+    closeCreateGroupBtn.addEventListener('click', () => createGroupModal.classList.add('hidden'));
+    createGroupModal.addEventListener('click', (event) => {
+        if (event.target === createGroupModal) {
+            createGroupModal.classList.add('hidden');
+        }
+    });
+
+    // Invio Dati al Backend
+    submitGroupBtn.addEventListener('click', async () => {
+        const name = document.getElementById('group-name').value.trim();
+        const description = document.getElementById('group-desc').value.trim();
+        const access = document.getElementById('group-access').value;
+        const permissions = document.getElementById('group-permissions').value;
+
+        if (!name) {
+            alert("Il nome del gruppo è obbligatorio!");
+            return;
+        }
+
+        try {
+            // Sostituisci l'URL con il tuo link GitHub Codespaces se necessario
+            const response = await fetch('https://silver-cod-q7pp7qqj9wrvh44qw-8000.app.github.dev/api/groups/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: name,
+                    description: description,
+                    access: access,
+                    permissions: permissions,
+                    owner: currentUser // Questa variabile esiste già all'inizio del tuo file!
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert("🎉 " + data.messaggio); // Mostra un popup nativo di successo
+                createGroupModal.classList.add('hidden'); // Chiude il modale
+                
+                // Pulisce i campi per la prossima volta
+                document.getElementById('group-name').value = '';
+                document.getElementById('group-desc').value = '';
+                
+            } else {
+                alert("Errore: " + data.detail);
+            }
+        } catch (error) {
+            console.error("Errore di connessione:", error);
+            alert("Errore di comunicazione col server.");
+        }
+    });
+
     // --- IL MOTORE DEI TEMI ---
     
     // 1. Definiamo le palette di colori per ogni tema

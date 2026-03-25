@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from tinydb import TinyDB, Query
+import uuid
 import bcrypt # Nuova importazione per la criptazione
 
 app = FastAPI()
@@ -16,6 +17,7 @@ app.add_middleware(
 
 db = TinyDB('db.json')
 users_table = db.table('users')
+groups_table = db.table('groups') # Creiamo una tabella separata per i gruppi
 UserQuery = Query()
 
 class UserAuth(BaseModel):
@@ -25,6 +27,13 @@ class UserAuth(BaseModel):
 class ThemeUpdate(BaseModel):
     username: str
     theme: str
+
+class GroupCreate(BaseModel):
+    name: str
+    description: str
+    access: str
+    permissions: str
+    owner: str # Il creatore del gruppo
 
 @app.get("/api/test")
 def test_endpoint():
@@ -110,3 +119,28 @@ def get_user_profile(username: str):
         del user_data['password']
         
     return {"status": "successo", "dati": user_data}
+
+@app.post("/api/groups/create")
+def create_group(group: GroupCreate):
+    if not group.name.strip():
+        raise HTTPException(status_code=400, detail="Il nome del gruppo è obbligatorio")
+
+    # Generiamo un ID univoco globale
+    group_id = str(uuid.uuid4())
+    
+    # Creiamo l'oggetto da salvare nel database
+    new_group = {
+        "id": group_id,
+        "name": group.name,
+        "description": group.description,
+        "access": group.access,
+        "permissions": group.permissions,
+        "owner": group.owner,
+        # L'array members conterrà gli username. Il creatore è il primo membro!
+        "members": [group.owner] 
+    }
+    
+    # Salviamo nel TinyDB
+    groups_table.insert(new_group)
+    
+    return {"status": "successo", "messaggio": f"Gruppo '{group.name}' creato!", "group_id": group_id}

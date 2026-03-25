@@ -89,6 +89,32 @@ button:hover {
     box-shadow: 0 0 20px var(--glow-shadow);
 }
 
+/* Stili per Textarea e Select nel Modale */
+textarea, .custom-select {
+    width: 100%;
+    padding: 12px 15px;
+    background-color: rgba(19, 41, 51, 0.8);
+    border: 1px solid var(--accent-title);
+    border-radius: 8px;
+    color: var(--text-light);
+    font-size: 1rem;
+    outline: none;
+    box-sizing: border-box;
+    font-family: inherit;
+    transition: box-shadow 0.3s ease;
+    margin-top: 5px;
+}
+
+textarea:focus, .custom-select:focus {
+    box-shadow: 0 0 8px rgba(252, 229, 205, 0.4);
+}
+
+/* Fix per i colori delle opzioni nel menu a tendina (i browser nativi li fanno bianchi di default) */
+.custom-select option {
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+}
+
 .output-section {
     display: flex;
     flex-direction: column;

@@ -27,6 +27,7 @@
     <main class="dashboard-main">
         <div class="main-header">
             <h2>I tuoi gruppi</h2>
+            <button id="create-group-btn" class="small-btn">+ Crea Gruppo</button>
         </div>
 
         <div class="filter-section">
@@ -74,6 +75,44 @@
                     </div>
                 </div>
 
+            </div>
+        </div>
+    </div>
+
+    <div id="create-group-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Nuovo Gruppo</h2>
+                <button id="close-create-group" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label class="output-label">Nome Gruppo</label>
+                    <input type="text" id="group-name" placeholder="Es. Progetto Reti">
+                </div>
+
+                <div class="input-group">
+                    <label class="output-label">Descrizione</label>
+                    <textarea id="group-desc" placeholder="Di cosa si occupa questo gruppo?" rows="3"></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label class="output-label">Accesso</label>
+                    <select id="group-access" class="custom-select">
+                        <option value="private">🔒 Privato (Solo su invito)</option>
+                        <option value="public">🌍 Pubblico (Trovabile nella ricerca)</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label class="output-label">Permessi di Scrittura</label>
+                    <select id="group-permissions" class="custom-select">
+                        <option value="all">Tutti i membri possono interagire</option>
+                        <option value="owner">Solo l'amministratore (Sola lettura per gli altri)</option>
+                    </select>
+                </div>
+
+                <button id="submit-create-group" style="width: 100%; margin-top: 15px;">Crea Ora</button>
             </div>
         </div>
     </div>
