@@ -72,8 +72,7 @@ def register(user: UserAuth):
         # 2. Salviamo la password criptata decodificandola in stringa per il JSON
         'password': hashed_password.decode('utf-8'),
         'impostazioni': {
-            'tema': 'dark',
-            'notifiche': True
+            'tema': 'dark'
         }
     })
     return {"status": "successo", "messaggio": "Account creato con successo!"}

@@ -1,1 +1,34 @@
-{"users": {"1": {"username": "utente", "password": "$2b$12$6OuWmYVOfXJR/4SVag4Ptup1HSUxEeQoS1ZexlxAL1o0cZWXofOMO", "impostazioni": {"tema": "ocean", "notifiche": true}, "ultimo_accesso": 1774459023.644992}, "2": {"username": "test", "password": "$2b$12$GsPCUVkXoepoT9dZZwKVPu.H5D4wgpZnT4R9QTXHtC.oF/F03KHU6", "impostazioni": {"tema": "dark", "notifiche": true}, "ultimo_accesso": 1774458964.6182947}}, "groups": {"1": {"id": "34ca5497-7d96-45a0-a7da-7cc44dac806b", "name": "Esempio", "description": "boh nn so sto solo provando per ora", "access": "private", "permissions": "owner", "owner": "utente", "members": ["utente", "test"]}}}
+{
+    "users": {
+        "1": {
+            "username": "utente",
+            "password": "$2b$12$6OuWmYVOfXJR/4SVag4Ptup1HSUxEeQoS1ZexlxAL1o0cZWXofOMO",
+            "impostazioni": {
+                "tema": "default"
+            },
+            "ultimo_accesso": 1774459249.8824606
+        },
+        "2": {
+            "username": "test",
+            "password": "$2b$12$GsPCUVkXoepoT9dZZwKVPu.H5D4wgpZnT4R9QTXHtC.oF/F03KHU6",
+            "impostazioni": {
+                "tema": "dark"
+            },
+            "ultimo_accesso": 1774459213.4906714
+        }
+    },
+    "groups": {
+        "1": {
+            "id": "34ca5497-7d96-45a0-a7da-7cc44dac806b",
+            "name": "Esempio",
+            "description": "boh nn so sto solo provando per ora",
+            "access": "private",
+            "permissions": "owner",
+            "owner": "utente",
+            "members": [
+                "utente",
+                "test"
+            ]
+        }
+    }
+}
