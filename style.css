@@ -668,16 +668,31 @@ input[type="password"]:focus {
     min-height: 100vh;
 }
 
+/* Fix dell'Header */
 .group-page-body .main-header {
     width: 100%;
     box-sizing: border-box;
-    padding: 15px 30px; /* Aggiunge il respiro ai lati e sopra/sotto */
-    background-color: var(--theme-surface); /* Assicura che l'header abbia uno sfondo distinto */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Leggera ombra per separarlo dal body */
+    padding: 15px 30px;
+    background-color: var(--theme-header-bg) !important; /* ORA USA IL COLORE CORRETTO! */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); 
 }
 
 .group-page-body .dashboard-container {
     padding: 20px;
     max-width: 1200px;
     margin: 0 auto;
+}
+
+/* Restituiamo lo stile al Logo NotesGO */
+#logo-link {
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Restituiamo lo stile al Logo NotesGO */
+#logo-link {
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }

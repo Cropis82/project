@@ -6,64 +6,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    // Applica il tema salvato
+    // Applica il tema salvato con i colori completi
     const themePalettes = {
-        default: {
-            '--theme-bg': '#fff5ef',
-            '--theme-surface': '#f0e4db',
-            '--theme-border': '#e0d5ce',
-            '--theme-primary': '#f6b36b',
-            '--theme-primary-glow': 'rgba(246, 179, 107, 0.6)',
-            '--theme-placeholder': '#8c9fa8',
-            '--theme-card-text': '#132933',
-            '--theme-text': '#132933',        // Testo scuro
-            '--theme-header-bg': '#132933'    // Header scuro
-        },
-        dark: {
-            '--theme-bg': '#1a1a2e',
-            '--theme-surface': '#16213e',
-            '--theme-border': '#0f3460',
-            '--theme-primary': '#e94560',     // Rosso corallo
-            '--theme-primary-glow': 'rgba(233, 69, 96, 0.6)',
-            '--theme-placeholder': '#536a82',
-            '--theme-card-text': '#ffffff',   // Testo bianco nelle carte
-            '--theme-text': '#e0e0e0',        // Testo chiaro per il body
-            '--theme-header-bg': '#0f3460'    // Header blu notte
-        },
-        ocean: {
-            '--theme-bg': '#e3f2fd',
-            '--theme-surface': '#bbdefb',
-            '--theme-border': '#90caf9',
-            '--theme-primary': '#2196f3',
-            '--theme-primary-glow': 'rgba(33, 150, 243, 0.6)',
-            '--theme-placeholder': '#64b5f6',
-            '--theme-card-text': '#ffffff',
-            '--theme-text': '#0d47a1',
-            '--theme-header-bg': '#0d47a1'
-        },
-        forest: {
-            '--theme-bg': '#f1f8e9',
-            '--theme-surface': '#dcedc8',
-            '--theme-border': '#c5e1a5',
-            '--theme-primary': '#8bc34a',
-            '--theme-primary-glow': 'rgba(139, 195, 74, 0.6)',
-            '--theme-placeholder': '#9ccc65',
-            '--theme-card-text': '#ffffff',
-            '--theme-text': '#33691e',
-            '--theme-header-bg': '#33691e'
-        },
-        minimal: {
-            '--theme-bg': '#ffffff',
-            '--theme-surface': '#f5f5f5',
-            '--theme-border': '#e0e0e0',
-            '--theme-primary': '#9e9e9e',
-            '--theme-primary-glow': 'rgba(158, 158, 158, 0.6)',
-            '--theme-placeholder': '#bdbdbd',
-            '--theme-card-text': '#ffffff',
-            '--theme-text': '#212121',
-            '--theme-header-bg': '#212121'
-        }
+        default: { '--theme-bg': '#fff5ef', '--theme-surface': '#f0e4db', '--theme-border': '#e0d5ce', '--theme-primary': '#f6b36b', '--theme-primary-glow': 'rgba(246, 179, 107, 0.6)', '--theme-placeholder': '#8c9fa8', '--theme-card-text': '#132933', '--theme-text': '#132933', '--theme-header-bg': '#132933' },
+        dark: { '--theme-bg': '#1a1a2e', '--theme-surface': '#16213e', '--theme-border': '#0f3460', '--theme-primary': '#e94560', '--theme-primary-glow': 'rgba(233, 69, 96, 0.6)', '--theme-placeholder': '#536a82', '--theme-card-text': '#ffffff', '--theme-text': '#e0e0e0', '--theme-header-bg': '#0f3460' },
+        ocean: { '--theme-bg': '#e3f2fd', '--theme-surface': '#bbdefb', '--theme-border': '#90caf9', '--theme-primary': '#2196f3', '--theme-primary-glow': 'rgba(33, 150, 243, 0.6)', '--theme-placeholder': '#64b5f6', '--theme-card-text': '#ffffff', '--theme-text': '#0d47a1', '--theme-header-bg': '#0d47a1' },
+        forest: { '--theme-bg': '#f1f8e9', '--theme-surface': '#dcedc8', '--theme-border': '#c5e1a5', '--theme-primary': '#8bc34a', '--theme-primary-glow': 'rgba(139, 195, 74, 0.6)', '--theme-placeholder': '#9ccc65', '--theme-card-text': '#ffffff', '--theme-text': '#33691e', '--theme-header-bg': '#33691e' },
+        minimal: { '--theme-bg': '#ffffff', '--theme-surface': '#f5f5f5', '--theme-border': '#e0e0e0', '--theme-primary': '#9e9e9e', '--theme-primary-glow': 'rgba(158, 158, 158, 0.6)', '--theme-placeholder': '#bdbdbd', '--theme-card-text': '#ffffff', '--theme-text': '#212121', '--theme-header-bg': '#212121' }
     };
+
     const savedTheme = localStorage.getItem('notesgo_theme') || 'default';
     for (const [variable, color] of Object.entries(themePalettes[savedTheme])) {
         document.documentElement.style.setProperty(variable, color);
@@ -135,16 +86,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 4. Animazione Header Espanso
     const expandTrigger = document.getElementById('header-expand-trigger');
     const expandedInfo = document.getElementById('expanded-info');
+    const hintText = document.getElementById('header-hint-text'); // Ora peschiamo l'elemento esatto
     let isExpanded = false;
 
     expandTrigger.addEventListener('click', () => {
         isExpanded = !isExpanded;
         if (isExpanded) {
             expandedInfo.classList.add('active');
-            expandTrigger.innerHTML = '<span style="opacity: 0.8; font-size: 0.8rem;">(Clicca per chiudere) ▲</span>';
+            hintText.textContent = '(Clicca per chiudere) ▲';
+            hintText.style.opacity = '1';
         } else {
             expandedInfo.classList.remove('active');
-            expandTrigger.innerHTML = '<span style="opacity: 0.5; font-size: 0.8rem;">(Clicca qui per info gruppo) ▼</span>';
+            hintText.textContent = '(Clicca qui per info gruppo) ▼';
+            hintText.style.opacity = '0.6';
         }
     });
 
