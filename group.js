@@ -357,6 +357,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div class="column-body" style="padding: 10px; flex-grow: 1;"></div>
             `;
 
+            renderTasksForColumn(col.id, colBody);
+
             // ... (I tuoi vecchi event listener per Drag&Drop e Bottoni rimangono uguali qui) ...
             colEl.addEventListener('dragstart', handleDragStart);
             colEl.addEventListener('dragover', handleDragOver);
