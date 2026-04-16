@@ -836,12 +836,19 @@ input[type="password"]:focus {
     display: flex;
     overflow-x: auto;
     align-items: flex-start;
-    padding-bottom: 20px;
     gap: 20px;
-    min-height: 60vh;
-    /* Personalizza la scrollbar orizzontale */
+    
+    /* Nuove regole per grandezza e sfondo */
+    min-height: 80vh; /* Occupa l'80% dell'altezza dello schermo */
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.04); /* Crea un riquadro con uno sfondo leggermente diverso */
+    border-radius: 12px;
+    border: 1px solid var(--theme-border);
+    margin-top: 15px;
+    
+    /* Scrollbar orizzontale */
     scrollbar-width: thin;
-    scrollbar-color: var(--theme-primary) var(--theme-surface);
+    scrollbar-color: var(--theme-primary) var(--theme-bg);
 }
 
 .kanban-board::-webkit-scrollbar {
@@ -931,4 +938,28 @@ input[type="password"]:focus {
 #add-column-btn:hover {
     background-color: var(--theme-surface);
     border-color: var(--theme-primary);
+}
+
+/* =========================================
+   TITOLI COLONNE SCORREVOLI
+   ========================================= */
+.title-container {
+    flex: 1; /* Prende tutto lo spazio disponibile prima dei bottoni */
+    overflow: hidden; /* Taglia via fisicamente quello che esce */
+    white-space: nowrap; /* Impedisce al testo di andare a capo */
+    margin-right: 10px;
+}
+
+.column-title-text {
+    display: inline-block;
+}
+
+.scrolling-text {
+    /* Il ciclo dura 4 secondi totali, continua all'infinito */
+    animation: scroll-marquee 4s linear infinite;
+}
+
+@keyframes scroll-marquee {
+    0%, 20% { transform: translateX(0); } /* Fermo all'inizio per un attimo */
+    80%, 100% { transform: translateX(var(--scroll-dist)); } /* Arriva in fondo, aspetta un attimo, poi riparte */
 }

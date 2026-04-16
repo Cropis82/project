@@ -282,9 +282,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 renderBoard();
                 break;
             case 'columns_reordered':
-                // Riordina l'array locale basandosi sui nuovi ID
                 const newOrder = msg.data;
-                columnsData.sort((a, b) => newOrder.indexOf(a.id) - newOrder.indexOf(b.id));
+                // IL FIX: Ora aggiorniamo il parametro 'order' per ogni colonna
+                // in modo che corrisponda alla nuova posizione scelta.
+                columnsData.forEach(col => {
+                    col.order = newOrder.indexOf(col.id);
+                });
+                // Ora possiamo ridisegnare tranquillamente!
                 renderBoard();
                 break;
         }
@@ -309,9 +313,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             colEl.setAttribute('data-id', col.id);
             colEl.draggable = true;
 
+            // Nuova struttura HTML con il contenitore per il titolo
             colEl.innerHTML = `
                 <div class="column-header" style="background-color: ${col.color};">
-                    <span>${col.title}</span>
+                    <div class="title-container">
+                        <span class="column-title-text">${col.title}</span>
+                    </div>
                     <div class="column-actions">
                         <button class="column-btn edit-col-btn" title="Modifica">✏️</button>
                         <button class="column-btn delete-col-btn" title="Elimina">🗑️</button>
@@ -320,14 +327,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div class="column-body" style="padding: 10px; flex-grow: 1;"></div>
             `;
 
-            // Eventi Drag & Drop
+            // ... (I tuoi vecchi event listener per Drag&Drop e Bottoni rimangono uguali qui) ...
             colEl.addEventListener('dragstart', handleDragStart);
             colEl.addEventListener('dragover', handleDragOver);
             colEl.addEventListener('dragleave', handleDragLeave);
             colEl.addEventListener('drop', handleDrop);
             colEl.addEventListener('dragend', handleDragEnd);
 
-            // Eventi Bottoni Modifica/Elimina
             colEl.querySelector('.edit-col-btn').addEventListener('click', () => openColumnModal(col));
             colEl.querySelector('.delete-col-btn').addEventListener('click', () => {
                 if(confirm("Vuoi davvero eliminare questa colonna e tutto il suo contenuto?")) {
@@ -335,7 +341,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             });
 
+            // 1. Inseriamo la colonna nel DOM (Fondamentale farlo PRIMA di misurare)
             kanbanBoard.insertBefore(colEl, addColContainer);
+
+            // 2. Misuriamo il testo: se sfora, attiviamo lo scrolling!
+            const titleContainer = colEl.querySelector('.title-container');
+            const titleText = colEl.querySelector('.column-title-text');
+            
+            // Se la larghezza reale del testo è maggiore del suo contenitore visibile...
+            if (titleText.scrollWidth > titleContainer.clientWidth) {
+                // Calcoliamo quanti pixel extra ci sono da far scorrere
+                const scrollDistance = titleText.scrollWidth - titleContainer.clientWidth;
+                // Passiamo la distanza calcolata al CSS tramite una variabile custom
+                titleText.style.setProperty('--scroll-dist', `-${scrollDistance}px`);
+                titleText.classList.add('scrolling-text');
+            }
         });
     }
 
