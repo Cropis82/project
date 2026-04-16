@@ -105,10 +105,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 5. Logica Copia ID
     const showIdBtn = document.getElementById('show-id-btn');
     const idModal = document.getElementById('id-modal');
-    
+
     showIdBtn.addEventListener('click', () => idModal.classList.remove('hidden'));
     document.getElementById('close-id-modal').addEventListener('click', () => idModal.classList.add('hidden'));
-    
+
     // Copia negli appunti cliccando l'ID
     groupIdDisplay.addEventListener('click', () => {
         navigator.clipboard.writeText(groupId).then(() => {
@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 6. Logica Abbandona Gruppo
     const leaveBtn = document.getElementById('leave-group-btn');
     const leaveModal = document.getElementById('leave-modal');
-    
+
     leaveBtn.addEventListener('click', () => leaveModal.classList.remove('hidden'));
     document.getElementById('close-leave-modal').addEventListener('click', () => leaveModal.classList.add('hidden'));
 
@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const settingsModal = document.getElementById('settings-modal');
     const editGroupName = document.getElementById('edit-group-name');
     const editGroupDesc = document.getElementById('edit-group-desc');
-    
+
     // Apri modale e pre-compila i campi
     settingsBtn.addEventListener('click', () => {
         editGroupName.value = document.getElementById('exp-group-name').textContent;
@@ -199,7 +199,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Elimina Gruppo
     document.getElementById('delete-group-btn').addEventListener('click', async () => {
         const confirmDelete = confirm("ATTENZIONE! Questa azione è irreversibile. Sei davvero sicuro di voler eliminare l'intero gruppo?");
-        
+
         if (confirmDelete) {
             try {
                 const res = await fetch(`${backendUrl}/api/group/delete`, {
@@ -230,7 +230,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username: currentUser })
             });
-        } catch (e) {}
+        } catch (e) { }
     }, 60000);
 
     // =========================================
@@ -243,7 +243,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const colColorInput = document.getElementById('col-color');
     const editColIdInput = document.getElementById('edit-col-id');
     const saveColBtn = document.getElementById('save-column-btn');
-    
+
     // Configura WebSocket (adatta la porta se necessario)
     const wsUrl = `wss://silver-cod-q7pp7qqj9wrvh44qw-8000.app.github.dev/ws/group/${groupId}/${currentUser}`;
     let ws = new WebSocket(wsUrl);
@@ -259,7 +259,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Gestione messaggi in entrata
     ws.onmessage = (event) => {
         const msg = JSON.parse(event.data);
-        
+
         switch (msg.action) {
             case 'init_columns':
                 columnsData = msg.data;
@@ -271,7 +271,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 break;
             case 'column_updated':
                 const index = columnsData.findIndex(c => c.id === msg.data.id);
-                if(index > -1) {
+                if (index > -1) {
                     columnsData[index].title = msg.data.title;
                     columnsData[index].color = msg.data.color;
                     renderBoard();
@@ -336,7 +336,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             colEl.querySelector('.edit-col-btn').addEventListener('click', () => openColumnModal(col));
             colEl.querySelector('.delete-col-btn').addEventListener('click', () => {
-                if(confirm("Vuoi davvero eliminare questa colonna e tutto il suo contenuto?")) {
+                if (confirm("Vuoi davvero eliminare questa colonna e tutto il suo contenuto?")) {
                     ws.send(JSON.stringify({ action: "delete_column", payload: { id: col.id } }));
                 }
             });
@@ -347,7 +347,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // 2. Misuriamo il testo: se sfora, attiviamo lo scrolling!
             const titleContainer = colEl.querySelector('.title-container');
             const titleText = colEl.querySelector('.column-title-text');
-            
+
             // Se la larghezza reale del testo è maggiore del suo contenitore visibile...
             if (titleText.scrollWidth > titleContainer.clientWidth) {
                 // Calcoliamo quanti pixel extra ci sono da far scorrere
@@ -356,6 +356,30 @@ document.addEventListener('DOMContentLoaded', async () => {
                 titleText.style.setProperty('--scroll-dist', `-${scrollDistance}px`);
                 titleText.classList.add('scrolling-text');
             }
+
+            // --- 4. DROPZONE SULLE COLONNE ---
+            // Aggiungi questi listener all'elemento `.column-body` quando lo crei nel JS
+            colBody.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            });
+
+            colBody.addEventListener('drop', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                try {
+                    const data = JSON.parse(e.dataTransfer.getData('application/json'));
+                    if (data.type === 'task') {
+                        const targetColumnId = col.id; // L'ID della colonna in cui stiamo droppando
+                        // MANDA MESSAGGIO AL WEBSOCKET PER AGGIORNARE IL TASK!
+                        ws.send(JSON.stringify({
+                            action: "move_task",
+                            payload: { task_id: data.id, new_column_id: targetColumnId }
+                        }));
+                    }
+                } catch (err) { }
+            });
         });
     }
 
@@ -393,7 +417,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const newOrder = columnsData.length;
             ws.send(JSON.stringify({ action: "create_column", payload: { title, color, order: newOrder } }));
         }
-        
+
         columnModal.classList.add('hidden');
     });
 
@@ -420,7 +444,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function handleDrop(e) {
         if (e.stopPropagation) e.stopPropagation();
-        
+
         if (dragSrcEl !== this) {
             // Scambia visivamente gli elementi per reattività immediata
             const parent = this.parentNode;
@@ -453,5 +477,71 @@ document.addEventListener('DOMContentLoaded', async () => {
             col.classList.remove('drag-over');
         });
     }
-});
 
+    // --- 1. VARIABILI GLOBALI ---
+    let tasksData = []; // Questo andrà popolato dal tuo WebSocket!
+    let currentTaskInView = null; // Salva il task attualmente aperto
+
+    // --- 2. GESTIONE MODALI ---
+    const globalAddTaskBtn = document.getElementById('global-add-task-btn');
+    const taskModal = document.getElementById('task-modal');
+    const closeTaskModal = document.getElementById('close-task-modal');
+    const taskColumnSelect = document.getElementById('task-column-select');
+
+    // Apre il modale per creare un nuovo task
+    globalAddTaskBtn.addEventListener('click', () => {
+        document.getElementById('task-modal-title').innerText = "Nuovo Task";
+        document.getElementById('edit-task-id').value = "";
+        document.getElementById('task-title').value = "";
+        document.getElementById('task-desc').value = "";
+        document.getElementById('task-due-date').value = "";
+
+        // Popola la tendina con le colonne attuali
+        taskColumnSelect.innerHTML = columnsData.map(col =>
+            `<option value="${col.id}">${col.title}</option>`
+        ).join('');
+
+        taskModal.classList.remove('hidden');
+    });
+
+    closeTaskModal.addEventListener('click', () => taskModal.classList.add('hidden'));
+
+    // --- 3. RENDERING DEI TASK ---
+    // Chiama questa funzione dentro la tua renderBoard(), dopo aver creato l'HTML della colonna
+    function renderTasksForColumn(columnId, columnBodyElement) {
+        const columnTasks = tasksData.filter(t => t.column_id === columnId);
+
+        columnTasks.forEach(task => {
+            const taskEl = document.createElement('div');
+            taskEl.className = 'task-card';
+            taskEl.draggable = true;
+            taskEl.dataset.taskId = task.id;
+
+            taskEl.innerHTML = `
+            <h4 class="task-title">${task.title}</h4>
+            <div class="task-desc-preview">${task.description || "Nessuna descrizione."}</div>
+            <div class="task-meta">
+                <span>👤 ${task.creator}</span>
+                <span>${task.due_date ? '🕒 ' + task.due_date : ''}</span>
+            </div>
+        `;
+
+            // DRAG & DROP DEI TASK
+            taskEl.addEventListener('dragstart', (e) => {
+                e.stopPropagation(); // IMPORTANTE: Blocca il drag della colonna genitore!
+                e.dataTransfer.setData('application/json', JSON.stringify({ type: 'task', id: task.id }));
+                setTimeout(() => taskEl.classList.add('is-dragging'), 0);
+            });
+
+            taskEl.addEventListener('dragend', (e) => {
+                e.stopPropagation();
+                taskEl.classList.remove('is-dragging');
+            });
+
+            // CLICK PER VISUALIZZARE I DETTAGLI
+            taskEl.addEventListener('click', () => openTaskViewModal(task));
+
+            columnBodyElement.appendChild(taskEl);
+        });
+    }
+});

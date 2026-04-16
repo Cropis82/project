@@ -993,3 +993,58 @@ input[type="password"]:focus {
     0%, 20% { transform: translateX(0); } /* Fermo all'inizio per un attimo */
     80%, 100% { transform: translateX(var(--scroll-dist)); } /* Arriva in fondo, aspetta un attimo, poi riparte */
 }
+
+/* =========================================
+   STILI PER LE TASK / CARD
+   ========================================= */
+.task-card {
+    background-color: var(--theme-bg);
+    border: 1px solid var(--theme-border);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.task-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+    border-color: var(--theme-primary);
+}
+
+.task-card.is-dragging {
+    opacity: 0.5;
+    transform: scale(0.95);
+    border: 2px dashed var(--theme-primary);
+}
+
+.task-title {
+    font-weight: bold;
+    color: var(--theme-text);
+    margin: 0 0 8px 0;
+    font-size: 1.05rem;
+}
+
+/* Magia CSS per limitare il testo a 3 righe */
+.task-desc-preview {
+    color: var(--theme-placeholder);
+    font-size: 0.85rem;
+    margin: 0 0 10px 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; 
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4;
+}
+
+.task-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--theme-placeholder);
+    border-top: 1px solid var(--theme-border);
+    padding-top: 8px;
+}

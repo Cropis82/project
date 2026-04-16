@@ -33,8 +33,9 @@
     </div>
 
    <main class="dashboard-container">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; width: 100%;">
             <h2 id="body-group-name" style="margin: 0;">Caricamento...</h2>
+            <button id="global-add-task-btn" class="save-btn" style="width: auto; margin-top: 0; padding: 10px 20px;">➕ Nuovo Task</button>
         </div>
 
         <div id="kanban-board" class="kanban-board">
@@ -122,6 +123,56 @@
                 <h3 class="danger-title">Zona Pericolosa</h3>
                 <button id="delete-group-btn" class="small-btn btn-danger" style="width: 100%;">🗑️ Elimina
                     Definitivamente Gruppo</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="task-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="task-modal-title">Nuovo Task</h2>
+                <button id="close-task-modal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="edit-task-id">
+                <div class="form-group">
+                    <label for="task-title">Titolo</label>
+                    <input type="text" id="task-title" class="modal-input" placeholder="Cosa c'è da fare?">
+                </div>
+                <div class="form-group">
+                    <label for="task-desc">Descrizione</label>
+                    <textarea id="task-desc" class="modal-input" rows="4" placeholder="Dettagli del task..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="task-due-date">Data di scadenza (Opzionale)</label>
+                    <input type="date" id="task-due-date" class="modal-input">
+                </div>
+                <div class="form-group">
+                    <label for="task-column-select">In quale colonna?</label>
+                    <select id="task-column-select" class="custom-select modal-input"></select>
+                </div>
+                <button id="save-task-btn" class="save-btn">💾 Salva Task</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="task-view-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="view-task-title">Titolo Task</h2>
+                <button id="close-task-view-modal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 0.9rem; color: var(--theme-placeholder);">
+                    <span>👤 Creato da: <strong id="view-task-creator" style="color: var(--theme-text);"></strong></span>
+                    <span>🕒 Scadenza: <strong id="view-task-due" style="color: var(--theme-text);"></strong></span>
+                </div>
+                <div class="json-box" id="view-task-desc" style="background: var(--theme-surface); border: 1px solid var(--theme-border); min-height: 100px; color: var(--theme-text); font-family: inherit;">
+                    </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button id="edit-task-btn" class="save-btn" style="background-color: var(--theme-primary);">✏️ Modifica</button>
+                    <button id="delete-task-btn" class="save-btn btn-danger">🗑️ Elimina</button>
+                </div>
             </div>
         </div>
     </div>

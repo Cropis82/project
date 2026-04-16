@@ -20,6 +20,8 @@ db = TinyDB('db.json')
 users_table = db.table('users')
 groups_table = db.table('groups') # Creiamo una tabella separata per i gruppi
 columns_table = db.table('columns')
+tasks_table = db.table('tasks')
+TaskQuery = Query()
 UserQuery = Query()
 
 class UserAuth(BaseModel):
@@ -321,6 +323,10 @@ async def websocket_endpoint(websocket: WebSocket, group_id: str, username: str)
     columns = columns_table.search(ColQuery.group_id == group_id)
     columns.sort(key=lambda x: x.get('order', 0))
     await websocket.send_json({"action": "init_columns", "data": columns})
+
+    # 2. AGGIUNGI QUESTO: Invia i task esistenti per questo gruppo
+    tasks = tasks_table.search(TaskQuery.group_id == group_id)
+    await websocket.send_json({"action": "init_tasks", "data": tasks})
     
     try:
         while True:
@@ -356,6 +362,63 @@ async def websocket_endpoint(websocket: WebSocket, group_id: str, username: str)
                 for index, col_id in enumerate(payload['order']):
                     columns_table.update({'order': index}, ColQuery.id == col_id)
                 await manager.broadcast({"action": "columns_reordered", "data": payload['order']}, group_id)
+            
+            # --- GESTIONE DEI TASK ---
+            
+            elif action == "create_task":
+                new_task = {
+                    "id": str(uuid.uuid4()),
+                    "group_id": group_id,
+                    "column_id": payload.get("column_id"),
+                    "title": payload.get("title"),
+                    "description": payload.get("description", ""),
+                    "due_date": payload.get("due_date", ""),
+                    "creator": username, # Usiamo l'username passato nell'URL del WebSocket
+                    "created_at": time.time()
+                }
+                
+                # Salva nel TinyDB
+                tasks_table.insert(new_task)
+                
+                # Avvisa tutti i membri del gruppo del nuovo task
+                await manager.broadcast({"action": "task_created", "data": new_task}, group_id)
+
+            elif action == "move_task":
+                task_id = payload.get("task_id")
+                new_column_id = payload.get("new_column_id")
+                
+                # Aggiorna il column_id nel TinyDB
+                tasks_table.update({'column_id': new_column_id}, TaskQuery.id == task_id)
+                
+                # Avvisa gli altri che il task si è spostato
+                await manager.broadcast({
+                    "action": "task_moved", 
+                    "data": {"task_id": task_id, "new_column_id": new_column_id}
+                }, group_id)
+
+            elif action == "delete_task":
+                task_id = payload.get("task_id")
+                
+                # Rimuovi dal DB
+                tasks_table.remove(TaskQuery.id == task_id)
+                
+                # Avvisa gli altri
+                await manager.broadcast({"action": "task_deleted", "data": {"task_id": task_id}}, group_id)
+                
+            elif action == "update_task":
+                # Se decidi di implementare anche la modifica del titolo/descrizione
+                task_id = payload.get("id")
+                
+                # Estraiamo i campi aggiornati (escludendo l'id che non si tocca)
+                updated_fields = {
+                    "title": payload.get("title"),
+                    "description": payload.get("description"),
+                    "due_date": payload.get("due_date")
+                }
+                
+                tasks_table.update(updated_fields, TaskQuery.id == task_id)
+                await manager.broadcast({"action": "task_updated", "data": payload}, group_id)
 
     except WebSocketDisconnect:
         manager.disconnect(websocket, group_id)
+
