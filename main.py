@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from tinydb import TinyDB, Query
@@ -19,6 +19,7 @@ app.add_middleware(
 db = TinyDB('db.json')
 users_table = db.table('users')
 groups_table = db.table('groups') # Creiamo una tabella separata per i gruppi
+columns_table = db.table('columns')
 UserQuery = Query()
 
 class UserAuth(BaseModel):
@@ -53,6 +54,31 @@ class UpdateGroupSettings(BaseModel):
 class DeleteGroup(BaseModel):
     username: str
     group_id: str
+
+# Gestore delle connessioni WebSocket
+class ConnectionManager:
+    def __init__(self):
+        # Mappa i group_id a una lista di WebSocket connessi
+        self.active_connections: dict[str, list[WebSocket]] = {}
+
+    async def connect(self, websocket: WebSocket, group_id: str):
+        await websocket.accept()
+        if group_id not in self.active_connections:
+            self.active_connections[group_id] = []
+        self.active_connections[group_id].append(websocket)
+
+    def disconnect(self, websocket: WebSocket, group_id: str):
+        if group_id in self.active_connections:
+            self.active_connections[group_id].remove(websocket)
+            if not self.active_connections[group_id]:
+                del self.active_connections[group_id]
+
+    async def broadcast(self, message: dict, group_id: str):
+        if group_id in self.active_connections:
+            for connection in self.active_connections[group_id]:
+                await connection.send_json(message)
+
+manager = ConnectionManager()
 
 @app.get("/api/test")
 def test_endpoint():
@@ -284,3 +310,52 @@ def delete_group(data: DeleteGroup):
         
     groups_table.remove(GroupQuery.id == data.group_id)
     return {"status": "successo"}
+
+# L'Endpoint WebSocket
+@app.websocket("/ws/group/{group_id}/{username}")
+async def websocket_endpoint(websocket: WebSocket, group_id: str, username: str):
+    await manager.connect(websocket, group_id)
+    
+    # Invia lo stato iniziale delle colonne appena l'utente si connette
+    ColQuery = Query()
+    columns = columns_table.search(ColQuery.group_id == group_id)
+    columns.sort(key=lambda x: x.get('order', 0))
+    await websocket.send_json({"action": "init_columns", "data": columns})
+    
+    try:
+        while True:
+            # Riceve i messaggi dal frontend
+            data = await websocket.receive_json()
+            action = data.get("action")
+            payload = data.get("payload")
+
+            if action == "create_column":
+                new_col = {
+                    "id": str(uuid.uuid4()),
+                    "group_id": group_id,
+                    "title": payload["title"],
+                    "color": payload["color"],
+                    "order": payload["order"]
+                }
+                columns_table.insert(new_col)
+                await manager.broadcast({"action": "column_created", "data": new_col}, group_id)
+
+            elif action == "update_column":
+                columns_table.update(
+                    {'title': payload['title'], 'color': payload['color']},
+                    ColQuery.id == payload['id']
+                )
+                await manager.broadcast({"action": "column_updated", "data": payload}, group_id)
+
+            elif action == "delete_column":
+                columns_table.remove(ColQuery.id == payload['id'])
+                await manager.broadcast({"action": "column_deleted", "data": payload['id']}, group_id)
+
+            elif action == "reorder_columns":
+                # Riceve una lista di ID con il nuovo ordine
+                for index, col_id in enumerate(payload['order']):
+                    columns_table.update({'order': index}, ColQuery.id == col_id)
+                await manager.broadcast({"action": "columns_reordered", "data": payload['order']}, group_id)
+
+    except WebSocketDisconnect:
+        manager.disconnect(websocket, group_id)

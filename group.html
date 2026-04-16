@@ -35,8 +35,38 @@
     <main class="dashboard-container">
         <h2 id="body-group-name">Caricamento...</h2>
 
-        <div class="kanban-placeholder">
-            La Kanban Board verrà inserita qui.
+        <main class="dashboard-container">
+            <h2 id="body-group-name">Caricamento...</h2>
+
+            <div id="kanban-board" class="kanban-board">
+                <div class="add-column-card" id="add-column-container">
+                    <button id="add-column-btn">+ Aggiungi Colonna</button>
+                </div>
+            </div>
+        </main>
+
+        <div id="column-modal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="column-modal-title">Nuova Colonna</h2>
+                    <button id="close-column-modal" class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="edit-col-id">
+                    <div class="form-group">
+                        <label for="col-title">Titolo Colonna</label>
+                        <input type="text" id="col-title" class="modal-input"
+                            placeholder="Es. Da Fare, In Corso, Finito...">
+                    </div>
+                    <div class="form-group">
+                        <label for="col-color">Colore Intestazione</label>
+                        <input type="color" id="col-color"
+                            style="width: 100%; height: 40px; border: none; border-radius: 5px; cursor: pointer;"
+                            value="#f6b36b">
+                    </div>
+                    <button id="save-column-btn" class="save-btn">💾 Salva Colonna</button>
+                </div>
+            </div>
         </div>
     </main>
 
@@ -85,13 +115,15 @@
                 </div>
                 <div class="form-group">
                     <label for="edit-group-desc">Descrizione</label>
-                    <textarea id="edit-group-desc" class="modal-input" rows="3" placeholder="Nuova descrizione..." style="resize: vertical;"></textarea>
+                    <textarea id="edit-group-desc" class="modal-input" rows="3" placeholder="Nuova descrizione..."
+                        style="resize: vertical;"></textarea>
                 </div>
                 <button id="save-settings-btn" class="save-btn">💾 Salva Modifiche</button>
 
                 <hr class="danger-zone-hr">
                 <h3 class="danger-title">Zona Pericolosa</h3>
-                <button id="delete-group-btn" class="small-btn btn-danger" style="width: 100%;">🗑️ Elimina Definitivamente Gruppo</button>
+                <button id="delete-group-btn" class="small-btn btn-danger" style="width: 100%;">🗑️ Elimina
+                    Definitivamente Gruppo</button>
             </div>
         </div>
     </div>

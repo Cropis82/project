@@ -232,4 +232,201 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         } catch (e) {}
     }, 60000);
+
+    // =========================================
+    // WEBSOCKET E KANBAN BOARD LOGIC
+    // =========================================
+    const kanbanBoard = document.getElementById('kanban-board');
+    const addColContainer = document.getElementById('add-column-container');
+    const columnModal = document.getElementById('column-modal');
+    const colTitleInput = document.getElementById('col-title');
+    const colColorInput = document.getElementById('col-color');
+    const editColIdInput = document.getElementById('edit-col-id');
+    const saveColBtn = document.getElementById('save-column-btn');
+    
+    // Configura WebSocket (adatta la porta se necessario)
+    const wsUrl = `wss://silver-cod-q7pp7qqj9wrvh44qw-8000.app.github.dev/ws/group/${groupId}/${currentUser}`;
+    let ws = new WebSocket(wsUrl);
+
+    let columnsData = [];
+    let dragSrcEl = null;
+
+    // Gestione messaggi in entrata
+    ws.onmessage = (event) => {
+        const msg = JSON.parse(event.data);
+        
+        switch (msg.action) {
+            case 'init_columns':
+                columnsData = msg.data;
+                renderBoard();
+                break;
+            case 'column_created':
+                columnsData.push(msg.data);
+                renderBoard();
+                break;
+            case 'column_updated':
+                const index = columnsData.findIndex(c => c.id === msg.data.id);
+                if(index > -1) {
+                    columnsData[index].title = msg.data.title;
+                    columnsData[index].color = msg.data.color;
+                    renderBoard();
+                }
+                break;
+            case 'column_deleted':
+                columnsData = columnsData.filter(c => c.id !== msg.data);
+                renderBoard();
+                break;
+            case 'columns_reordered':
+                // Riordina l'array locale basandosi sui nuovi ID
+                const newOrder = msg.data;
+                columnsData.sort((a, b) => newOrder.indexOf(a.id) - newOrder.indexOf(b.id));
+                renderBoard();
+                break;
+        }
+    };
+
+    ws.onclose = () => {
+        console.warn("WebSocket disconnesso. Implementare la riconnessione automatica in futuro.");
+    };
+
+    // Renderizza le colonne nell'HTML
+    function renderBoard() {
+        // Rimuovi tutte le colonne esistenti ma mantieni il bottone "+"
+        const existingCols = document.querySelectorAll('.kanban-column');
+        existingCols.forEach(col => col.remove());
+
+        // Ordina l'array per sicurezza (l'order definisce la posizione da sinistra a destra)
+        columnsData.sort((a, b) => a.order - b.order);
+
+        columnsData.forEach(col => {
+            const colEl = document.createElement('div');
+            colEl.className = 'kanban-column';
+            colEl.setAttribute('data-id', col.id);
+            colEl.draggable = true;
+
+            colEl.innerHTML = `
+                <div class="column-header" style="background-color: ${col.color};">
+                    <span>${col.title}</span>
+                    <div class="column-actions">
+                        <button class="column-btn edit-col-btn" title="Modifica">✏️</button>
+                        <button class="column-btn delete-col-btn" title="Elimina">🗑️</button>
+                    </div>
+                </div>
+                <div class="column-body" style="padding: 10px; flex-grow: 1;"></div>
+            `;
+
+            // Eventi Drag & Drop
+            colEl.addEventListener('dragstart', handleDragStart);
+            colEl.addEventListener('dragover', handleDragOver);
+            colEl.addEventListener('dragleave', handleDragLeave);
+            colEl.addEventListener('drop', handleDrop);
+            colEl.addEventListener('dragend', handleDragEnd);
+
+            // Eventi Bottoni Modifica/Elimina
+            colEl.querySelector('.edit-col-btn').addEventListener('click', () => openColumnModal(col));
+            colEl.querySelector('.delete-col-btn').addEventListener('click', () => {
+                if(confirm("Vuoi davvero eliminare questa colonna e tutto il suo contenuto?")) {
+                    ws.send(JSON.stringify({ action: "delete_column", payload: { id: col.id } }));
+                }
+            });
+
+            kanbanBoard.insertBefore(colEl, addColContainer);
+        });
+    }
+
+    // Modal Handlers
+    document.getElementById('add-column-btn').addEventListener('click', () => openColumnModal());
+    document.getElementById('close-column-modal').addEventListener('click', () => columnModal.classList.add('hidden'));
+
+    function openColumnModal(colData = null) {
+        if (colData) {
+            document.getElementById('column-modal-title').textContent = "Modifica Colonna";
+            colTitleInput.value = colData.title;
+            colColorInput.value = colData.color;
+            editColIdInput.value = colData.id;
+        } else {
+            document.getElementById('column-modal-title').textContent = "Nuova Colonna";
+            colTitleInput.value = "";
+            colColorInput.value = "#f6b36b"; // Colore default
+            editColIdInput.value = "";
+        }
+        columnModal.classList.remove('hidden');
+    }
+
+    saveColBtn.addEventListener('click', () => {
+        const title = colTitleInput.value.trim();
+        const color = colColorInput.value;
+        const id = editColIdInput.value;
+
+        if (!title) return alert("Inserisci un titolo.");
+
+        if (id) {
+            // Modifica colonna esistente
+            ws.send(JSON.stringify({ action: "update_column", payload: { id, title, color } }));
+        } else {
+            // Crea nuova colonna alla fine dell'array
+            const newOrder = columnsData.length;
+            ws.send(JSON.stringify({ action: "create_column", payload: { title, color, order: newOrder } }));
+        }
+        
+        columnModal.classList.add('hidden');
+    });
+
+    // =========================================
+    // LOGICA DRAG AND DROP COLONNE
+    // =========================================
+    function handleDragStart(e) {
+        dragSrcEl = this;
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/html', this.innerHTML);
+        this.style.opacity = '0.4';
+    }
+
+    function handleDragOver(e) {
+        if (e.preventDefault) e.preventDefault(); // Necessario per permettere il drop
+        e.dataTransfer.dropEffect = 'move';
+        this.classList.add('drag-over');
+        return false;
+    }
+
+    function handleDragLeave(e) {
+        this.classList.remove('drag-over');
+    }
+
+    function handleDrop(e) {
+        if (e.stopPropagation) e.stopPropagation();
+        
+        if (dragSrcEl !== this) {
+            // Scambia visivamente gli elementi per reattività immediata
+            const parent = this.parentNode;
+            const srcNext = dragSrcEl.nextSibling;
+            const thisNext = this.nextSibling;
+
+            if (thisNext === dragSrcEl) {
+                parent.insertBefore(dragSrcEl, this);
+            } else if (srcNext === this) {
+                parent.insertBefore(this, dragSrcEl);
+            } else {
+                parent.insertBefore(dragSrcEl, this);
+            }
+
+            // Calcola il nuovo ordine leggendo il DOM
+            const newOrderIds = [];
+            document.querySelectorAll('.kanban-column').forEach(col => {
+                newOrderIds.push(col.getAttribute('data-id'));
+            });
+
+            // Invia al server il nuovo ordine
+            ws.send(JSON.stringify({ action: "reorder_columns", payload: { order: newOrderIds } }));
+        }
+        return false;
+    }
+
+    function handleDragEnd(e) {
+        this.style.opacity = '1';
+        document.querySelectorAll('.kanban-column').forEach(col => {
+            col.classList.remove('drag-over');
+        });
+    }
 });
+
