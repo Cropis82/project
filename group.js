@@ -648,15 +648,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('delete-task-btn').addEventListener('click', () => {
         if (!currentTaskInView) return;
 
-        if (confirm(`Sei sicuro di voler eliminare il task "${currentTaskInView.title}"?`)) {
-            // Avvisiamo il server
-            ws.send(JSON.stringify({
-                action: "delete_task",
-                payload: { task_id: currentTaskInView.id }
-            }));
+        // Avvisiamo il server
+        ws.send(JSON.stringify({
+            action: "delete_task",
+            payload: { task_id: currentTaskInView.id }
+        }));
 
-            // Chiudiamo il modale
-            document.getElementById('task-view-modal').classList.add('hidden');
-        }
+        // Chiudiamo il modale
+        document.getElementById('task-view-modal').classList.add('hidden');
+
     });
 });
