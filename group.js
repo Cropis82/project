@@ -248,6 +248,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     const wsUrl = `wss://silver-cod-q7pp7qqj9wrvh44qw-8000.app.github.dev/ws/group/${groupId}/${currentUser}`;
     let ws = new WebSocket(wsUrl);
 
+    // LOG DI DEBUG - Aggiungi questi per capire cosa succede
+    ws.onopen = () => console.log("✅ WebSocket Connesso con successo!");
+    ws.onerror = (error) => console.error("❌ Errore WebSocket. Controlla il tab 'Network'.", error);
+    ws.onclose = (e) => console.warn("⚠️ WebSocket Disconnesso:", e.code, e.reason);
+
     let columnsData = [];
     let dragSrcEl = null;
 
