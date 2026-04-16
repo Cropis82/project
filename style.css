@@ -697,7 +697,6 @@ input[type="password"]:focus {
     flex-direction: column;
     padding: 10px 20px; /* Padding leggero laterale */
     height: calc(100vh - 60px); /* Sottrai l'altezza della tua navbar/header se presente */
-    box-sizing: border-box;
 }
 
 /* Assicuriamoci che il testo centrale nell'header sia sempre leggibile */
