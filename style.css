@@ -803,12 +803,16 @@ input[type="password"]:focus {
     border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
-    transition: opacity 0.2s;
+    transition: all 0.2s;
     margin-top: 10px;
+    /* Rimuove l'effetto sfocato e mette un'ombra pulita verso il basso */
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2) !important; 
 }
 
 .save-btn:hover {
     opacity: 0.9;
+    transform: translateY(-1px); /* Piccolo effetto di sollevamento al passaggio del mouse */
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.3) !important;
 }
 
 .danger-zone-hr {
