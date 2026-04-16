@@ -29,6 +29,14 @@ body {
     margin: 0;
 }
 
+body, html {
+    height: 100vh;
+    margin: 0;
+    overflow: hidden; /* Impedisce lo scroll verticale di tutta la pagina */
+    display: flex;
+    flex-direction: column;
+}
+
 .container {
     background: rgba(255, 245, 239, 0.05);
     padding: 2.5rem;
@@ -677,10 +685,19 @@ input[type="password"]:focus {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); 
 }
 
-.group-page-body .dashboard-container {
+.group-page-body {
     padding: 20px;
     max-width: 1200px;
     margin: 0 auto;
+}
+
+.dashboard-container {
+    flex-grow: 1; 
+    display: flex;
+    flex-direction: column;
+    padding: 10px 20px; /* Padding leggero laterale */
+    height: calc(100vh - 60px); /* Sottrai l'altezza della tua navbar/header se presente */
+    box-sizing: border-box;
 }
 
 /* Assicuriamoci che il testo centrale nell'header sia sempre leggibile */
@@ -834,13 +851,17 @@ input[type="password"]:focus {
 
 .kanban-board {
     display: flex;
-    overflow-x: auto;
+    overflow-x: auto;    
+    overflow-y: hidden; /* Niente scroll verticale interno alla board */
     align-items: flex-start;
     gap: 20px;
-    
+        
+    flex-grow: 1; /* Prende tutto lo spazio verticale disponibile nel container */
+    width: 100%; /* Copre tutta la larghezza */
+
     /* Nuove regole per grandezza e sfondo */
-    min-height: 80vh; /* Occupa l'80% dell'altezza dello schermo */
-    padding: 20px;
+    padding: 20px;    
+    box-sizing: border-box;
     background-color: rgba(0, 0, 0, 0.04); /* Crea un riquadro con uno sfondo leggermente diverso */
     border-radius: 12px;
     border: 1px solid var(--theme-border);
@@ -864,8 +885,9 @@ input[type="password"]:focus {
 }
 
 .kanban-column {
-    min-width: 300px;
-    max-width: 300px;
+    min-width: 320px;
+    max-width: 320px;
+    max-height: 100%; 
     background-color: var(--theme-surface);
     border-radius: 8px;
     display: flex;
@@ -913,6 +935,12 @@ input[type="password"]:focus {
 
 .column-btn:hover {
     background: rgba(255, 255, 255, 0.5);
+}
+
+.column-body {
+    padding: 10px;
+    flex-grow: 1;
+    overflow-y: auto; /* Scroll verticale solo dentro la colonna */
 }
 
 .add-column-card {
