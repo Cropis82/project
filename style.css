@@ -669,11 +669,13 @@ input[type="password"]:focus {
 
 /* Fix per il layout della pagina Gruppo */
 .group-page-body {
-    display: block !important; /* Disabilita il flexbox centrato del login */
+    display: flex !important; /* Riattiviamo Flexbox per gestire le altezze */
+    flex-direction: column;
     background-color: var(--theme-bg);
     margin: 0;
     padding: 0;
-    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden; /* Impedisce alla pagina intera di scrollare */
 }
 
 /* Fix dell'Header */
@@ -685,18 +687,14 @@ input[type="password"]:focus {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); 
 }
 
-.group-page-body {
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
 .dashboard-container {
     flex-grow: 1; 
     display: flex;
     flex-direction: column;
-    padding: 10px 20px; /* Padding leggero laterale */
-    height: calc(100vh - 60px); /* Sottrai l'altezza della tua navbar/header se presente */
+    padding: 15px 20px; /* Margini esterni leggeri */
+    box-sizing: border-box;
+    min-height: 0; /* Fondamentale per far apparire la scrollbar della board */
+    overflow: hidden;
 }
 
 /* Assicuriamoci che il testo centrale nell'header sia sempre leggibile */
@@ -851,24 +849,24 @@ input[type="password"]:focus {
 .kanban-board {
     display: flex;
     overflow-x: auto;    
-    overflow-y: hidden; /* Niente scroll verticale interno alla board */
+    overflow-y: hidden; 
     align-items: flex-start;
     gap: 20px;
         
-    flex-grow: 1; /* Prende tutto lo spazio verticale disponibile nel container */
-    width: 100%; /* Copre tutta la larghezza */
+    flex-grow: 1; 
+    width: 100%; 
+    min-height: 0; /* Fondamentale per mantenere la board dentro il box */
 
-    /* Nuove regole per grandezza e sfondo */
     padding: 20px;    
     box-sizing: border-box;
-    background-color: rgba(0, 0, 0, 0.04); /* Crea un riquadro con uno sfondo leggermente diverso */
+    background-color: rgba(0, 0, 0, 0.04); 
     border-radius: 12px;
     border: 1px solid var(--theme-border);
-    margin-top: 15px;
+    margin-top: 10px;
     
     /* Scrollbar orizzontale */
     scrollbar-width: thin;
-    scrollbar-color: var(--theme-primary) var(--theme-bg);
+    scrollbar-color: var(--theme-primary) transparent; /* Rende il binario invisibile per un look più pulito */
 }
 
 .kanban-board::-webkit-scrollbar {
